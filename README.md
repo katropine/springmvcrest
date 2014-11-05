@@ -1,11 +1,11 @@
-SpringMVC SpringRest JaxRs Maven EJB boilerplate
+SpringMVC SpringRest Maven EJB boilerplate
 ============================================
 
 GlassFish Server 4
 
 Spring MVC 4
 
-Jax-Rs
+Spring Security 3.2
 
 EJB
 
