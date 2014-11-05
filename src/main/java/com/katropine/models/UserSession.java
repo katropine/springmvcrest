@@ -23,20 +23,24 @@ package com.katropine.models;
  *
  * @author kriss
  */
+import java.util.Collection;
 import java.util.Date;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
-public class UserSession {
+public class UserSession extends User{
 
-    private User user;
     private Date loginTime;
     private int rowsPerPage = 10;
+    private String email;
 
-    public User getUser() {
-        return user;
+    public UserSession(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    
+    public String getUserame(){
+        return this.getEmail();
     }
 
     public Date getLoginTime() {
@@ -55,4 +59,12 @@ public class UserSession {
         this.rowsPerPage = rowsPerPage;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
 }

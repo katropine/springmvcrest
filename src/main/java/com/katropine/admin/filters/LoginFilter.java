@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author kriss
  */
+
 @WebFilter("/secure/*")
 public class LoginFilter implements Filter {
 
@@ -47,15 +48,15 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-        HttpSession session = request.getSession(false);
-        UserSession userSession = (UserSession) session.getAttribute("userSession");
-        if (userSession != null && userSession.getUser().getId() > 0) {
-            chain.doFilter(req, res); // Logged-in user found, so just continue request.
-        } else {
-            response.sendRedirect(request.getContextPath() + "/login"); // No logged-in user found, so redirect to login page.
-        }
+//        HttpServletRequest request = (HttpServletRequest) req;
+//        HttpServletResponse response = (HttpServletResponse) res;
+//        HttpSession session = request.getSession(false);
+//        UserSession userSession = (UserSession) session.getAttribute("userSession");
+//        if (userSession != null && userSession.getUser().getId() > 0) {
+//            chain.doFilter(req, res); // Logged-in user found, so just continue request.
+//        } else {
+//            response.sendRedirect(request.getContextPath() + "/login"); // No logged-in user found, so redirect to login page.
+//        }
     }
 
     @Override

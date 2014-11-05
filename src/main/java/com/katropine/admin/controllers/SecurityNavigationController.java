@@ -2,7 +2,7 @@
 * @package Restful - katropine
 * @author Kristian Beres <kristian@katropine.com>
 * @copyright Katropine (c) 2014, www.katropine.com
-* @since Oct 29, 2014
+* @since Oct 31, 2014
 * @licence MIT
 *
 * Copyright (c) 2014 Katropine - Kristian Beres, http://www.katropine.com/
@@ -27,21 +27,32 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 package com.katropine.admin.controllers;
-
-
+import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/admin/springmvc")
-public class SpringmvcController {
+public class SecurityNavigationController {
     
-    @RequestMapping("/greeting/{name}")
-    public String greeting(@PathVariable String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
+    @RequestMapping(value={"/", "/login"}, method=RequestMethod.GET )
+    public String loginForm(Model model) {
+        model.addAttribute("message", "This is a message from the controller");
+        return "login";
+    } 
+     
+    @RequestMapping(value="/error-login", method=RequestMethod.GET)
+    public String invalidLogin(Model model) {
+        model.addAttribute("message", "Wrong Username/Password combination");
+        return "login";
     }
-       
+     
+    @RequestMapping(value="/success-login", method=RequestMethod.GET)
+    public String successLogin(Model model, Principal principal) {
+        // Principal principal
+        String name = "";
+        name = principal.getName(); //get logged in username
+        return "redirect:admin/springmvc/greeting/"+name;
+    }
 }

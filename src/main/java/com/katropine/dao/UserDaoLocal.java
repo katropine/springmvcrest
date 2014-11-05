@@ -33,5 +33,4 @@ public interface UserDaoLocal {
     int countAllUsers(String search);
 
     User authenticate(User user);
-
 }

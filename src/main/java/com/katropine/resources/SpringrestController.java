@@ -17,23 +17,44 @@
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
  * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.katropine.admin.controllers;
-
+package com.katropine.resources;
 
 import com.katropine.models.Greeting;
+import com.katropine.models.User;
+import com.katropine.services.UserServiceInterface;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 // rest example
 
 @RestController
 @RequestMapping("/springrest")
 public class SpringrestController {
-
+    
+    @Autowired
+    protected UserServiceInterface userService;
+    
     @RequestMapping(value = "/test/{id}", method = RequestMethod.GET, produces = "application/json")
     public Greeting findOwner(@PathVariable Long id) {
          return new Greeting(id, "This is Greeting");
     }
+    
+    
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(value=HttpStatus.NOT_FOUND)
+    @ResponseBody
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+    public List<User> findOwner() {
+         return userService.getAll();
+    }
+    
 }

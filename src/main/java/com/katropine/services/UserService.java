@@ -2,7 +2,7 @@
 * @package Restful - katropine
 * @author Kristian Beres <kristian@katropine.com>
 * @copyright Katropine (c) 2014, www.katropine.com
-* @since Oct 29, 2014
+* @since Nov 3, 2014
 * @licence MIT
 *
 * Copyright (c) 2014 Katropine - Kristian Beres, http://www.katropine.com/
@@ -26,22 +26,30 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-package com.katropine.admin.controllers;
+package com.katropine.services;
 
+import com.katropine.dao.UserDaoLocal;
+import com.katropine.models.User;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+@Service
+@Transactional
+public class UserService implements UserServiceInterface{
 
-@Controller
-@RequestMapping("/admin/springmvc")
-public class SpringmvcController {
-    
-    @RequestMapping("/greeting/{name}")
-    public String greeting(@PathVariable String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
+    @EJB(mappedName = "UserDao")
+    private UserDaoLocal userDAO;
+ 
+    public User getUser(String email) {
+        User user = new User();
+        user.setEmail(email);
+        return userDAO.authenticate(user);
     }
-       
+    
+    public List<User> getAll() {
+         return userDAO.getAllUsers("");
+    }
+    
 }

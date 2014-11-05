@@ -19,9 +19,15 @@
  */
 package com.katropine.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,10 +35,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -44,8 +53,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient; // will not be rendered in JSON
 
+
 @Entity
-@Table(name = "timelly_user")
+@Table(name = "user")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
@@ -54,7 +64,7 @@ import javax.xml.bind.annotation.XmlTransient; // will not be rendered in JSON
     @NamedQuery(name="User.searchAll", query="SELECT e FROM User e WHERE e.firstname LIKE :fname OR e.lastname LIKE :lname OR e.email LIKE :email"),
     @NamedQuery(name="User.countAll", query="SELECT COUNT(e) FROM User e WHERE e.firstname LIKE :fname OR e.lastname LIKE :lname OR e.email LIKE :email")
 })
-public class User implements Serializable {
+public class User implements Serializable{
     
     @Size(max = 32)
     @Column(name = "firstname")
@@ -105,17 +115,23 @@ public class User implements Serializable {
     
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne
+    @XmlTransient
     private Company company;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
-
+    private Integer id;
+    
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Role role;
+    
     @XmlTransient
     @Transient
     private String candidatePassword;
-
+    
     
     public User() {
     }
@@ -124,7 +140,7 @@ public class User implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     
@@ -208,5 +224,19 @@ public class User implements Serializable {
     public void setCandidatePassword(String candidatePassword) {
         this.candidatePassword = candidatePassword;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+    @XmlTransient
+    public String getUsername() {
+        return this.getEmail();
+    }
+
+    
     
 }

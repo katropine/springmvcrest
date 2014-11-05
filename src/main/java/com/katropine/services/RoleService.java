@@ -2,7 +2,7 @@
 * @package Restful - katropine
 * @author Kristian Beres <kristian@katropine.com>
 * @copyright Katropine (c) 2014, www.katropine.com
-* @since Oct 28, 2014
+* @since Nov 3, 2014
 * @licence MIT
 *
 * Copyright (c) 2014 Katropine - Kristian Beres, http://www.katropine.com/
@@ -26,37 +26,22 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-package com.katropine.resources;
+package com.katropine.services;
 
-import com.katropine.dao.UserDaoLocal;
-import com.katropine.models.User;
-import java.util.List;
+import com.katropine.dao.RoleDaoLocal;
+import com.katropine.models.Role;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
-@Stateless
-@Path("jaxrs")
-public class JaxrsResource {
+@Service
+@Transactional
+public class RoleService implements RoleServiceInterface{
     
-    @EJB
-    private UserDaoLocal userDao;
-    
-    /**
-     * curl -i -H "Accept: application/json" "http://localhost:8080/springmvcrest/api/jaxrs"
-     * @return 
-     */
-    @GET
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<User> all(){
-        
-        List users = userDao.getAllUsers("");
-        return users;
-        
+    @EJB(mappedName = "RoleDao")
+    private RoleDaoLocal roleDAO;
+ 
+    public Role getRole(int id) {
+        return roleDAO.getRole(id);
     }
 }

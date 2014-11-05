@@ -2,7 +2,7 @@
 * @package Restful - katropine
 * @author Kristian Beres <kristian@katropine.com>
 * @copyright Katropine (c) 2014, www.katropine.com
-* @since Oct 29, 2014
+* @since Oct 31, 2014
 * @licence MIT
 *
 * Copyright (c) 2014 Katropine - Kristian Beres, http://www.katropine.com/
@@ -26,22 +26,53 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-package com.katropine.admin.controllers;
+package com.katropine.models;
 
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-@Controller
-@RequestMapping("/admin/springmvc")
-public class SpringmvcController {
+@Entity
+@Table(name = "role")
+public class Role implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     
-    @RequestMapping("/greeting/{name}")
-    public String greeting(@PathVariable String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
+    @Column(name = "name")
+    private String name;
+
+    @OneToMany(mappedBy = "role")
+    private List<User> userRoles;
+
+    public Integer getId() {
+        return id;
     }
-       
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<User> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<User> userRoles) {
+        this.userRoles = userRoles;
+    }
 }
