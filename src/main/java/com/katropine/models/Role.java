@@ -50,8 +50,18 @@ public class Role implements Serializable{
     private String name;
 
     @OneToMany(mappedBy = "role")
-    private List<User> userRoles;
-
+    private List<User> users;
+    
+    
+    public Role() {
+    }
+    
+    public Role(String name) {
+        this.name = name;
+    }
+    
+    
+    
     public Integer getId() {
         return id;
     }
@@ -68,11 +78,11 @@ public class Role implements Serializable{
         this.name = name;
     }
 
-    public List<User> getUserRoles() {
-        return userRoles;
+    public List<User> getUser() {
+        return users;
     }
 
-    public void setUserRoles(List<User> userRoles) {
-        this.userRoles = userRoles;
+    public void setUser(List<User> users) {
+        this.users = users;
     }
 }

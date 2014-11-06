@@ -29,9 +29,7 @@
 package com.katropine.services;
 
 import com.katropine.dao.BackendUserDaoLocal;
-import com.katropine.dao.UserDaoLocal;
 import com.katropine.models.BackendUser;
-import com.katropine.models.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -61,7 +59,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 
         BackendUser domainUser = userDAO.getByUsername(username);
          
-        boolean enabled = true;
+        
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
@@ -70,7 +68,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         org.springframework.security.core.userdetails.User sessUser =  new org.springframework.security.core.userdetails.User(
                 domainUser.getUsername(),
                 domainUser.getPassword(),
-                enabled,
+                domainUser.isEnabled(),
                 accountNonExpired,
                 credentialsNonExpired,
                 accountNonLocked,

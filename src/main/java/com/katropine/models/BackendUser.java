@@ -28,11 +28,14 @@
 */
 package com.katropine.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -60,7 +63,12 @@ public class BackendUser implements Serializable{
     private String email;
     
     private Boolean enabled = true;
-        
+    
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Role role;
+    
     public Long getId() {
         return id;
     }
@@ -93,7 +101,7 @@ public class BackendUser implements Serializable{
         this.email = email;
     }
 
-    public Boolean getEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
 
