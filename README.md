@@ -5,7 +5,7 @@ GlassFish Server 4
 
 Spring MVC 4
 
-Spring Security 3.2
+Spring Security 3.2 + oauth2
 
 EJB
 

@@ -82,17 +82,29 @@ public class UserDao implements UserDaoLocal {
     public void getUser() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+        
     @Override
-    public User authenticate(User user) {
-        System.out.println("User0: "+user.getEmail());
-        List<User> users = this.em.createNamedQuery("User.authenticate")
-                .setParameter("email", user.getEmail())
+    public User getByEmail(String email){
+        List<User> users = this.em.createNamedQuery("User.getByEmail")
+               .setParameter("email", email)
                 .getResultList();
-        //&& BCrypt.checkpw(user.getCandidatePassword(), users.get(0).getPassword())
+        
         if (!users.isEmpty() && users.get(0).getId() > 0) {
             return users.get(0);
         }
+        return new User();
+    }
+    
+    @Override
+    public User authenticate(User user) {
+//        System.out.println("User0: "+user.getEmail());
+//        List<User> users = this.em.createNamedQuery("User.authenticate")
+//                .setParameter("email", user.getEmail())
+//                .getResultList();
+//        //&& BCrypt.checkpw(user.getCandidatePassword(), users.get(0).getPassword())
+//        if (!users.isEmpty() && users.get(0).getId() > 0) {
+//            return users.get(0);
+//        }
         return new User();
     }
 }

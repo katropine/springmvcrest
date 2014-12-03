@@ -1,0 +1,30 @@
+Use seeder.sql to populate the tables.
+
+
+Backend:
+
+localhost:8080/springmvcrest
+
+kriss / test
+
+REST/OAUTH2
+
+curl -v -X POST -H "Content-Type: application/json" 'http://localhost:8080/springmvcrest/oauth/token?username=kriss@test.com&password=test&client_id=client1&client_secret=client1&grant_type=password'
+
+returns:
+
+{
+		"access_token":"89fda693-ec29-451b-8be0-2b71c7f11999",
+		"token_type":"bearer",
+		"refresh_token":"2b86f070-ed56-41f4-8d13-faddc104b1bd",
+		"expires_in":299880,"scope":"client1"
+}
+
+Request data from resource:
+
+curl -v -X GET -H "Authorization:Bearer 89fda693-ec29-451b-8be0-2b71c7f11999"  'http://localhost:8080/springmvcrest/api/springrest/users'
+        
+
+Logout:
+        
+curl -v -X GET -H "Authorization:Bearer 89fda693-ec29-451b-8be0-2b71c7f11999"  'http://localhost:8044/springmvcrest/oauth/logout'

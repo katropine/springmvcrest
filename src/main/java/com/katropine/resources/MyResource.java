@@ -2,7 +2,7 @@
 * @package Restful - katropine
 * @author Kristian Beres <kristian@katropine.com>
 * @copyright Katropine (c) 2014, www.katropine.com
-* @since Oct 31, 2014
+* @since Nov 6, 2014
 * @licence MIT
 *
 * Copyright (c) 2014 Katropine - Kristian Beres, http://www.katropine.com/
@@ -26,39 +26,34 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-package com.katropine.admin.controllers;
-import java.security.Principal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+package com.katropine.resources;
+
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-public class SecurityNavigationController {
-    
-    @RequestMapping(value={"/", "/login"}, method=RequestMethod.GET )
-    public String loginForm(Model model) {
-        model.addAttribute("message", "Login...");
-        return "login";
-    } 
-     
-    @RequestMapping(value="/error-login", method=RequestMethod.GET)
-    public String invalidLogin(Model model) {
-        model.addAttribute("message", "Wrong Username/Password combination");
-        return "login";
-    }
-     
-    @RequestMapping(value="/success-login", method=RequestMethod.GET)
-    public String successLogin(Model model, Principal principal) {
-        // Principal principal          
-        String name = "";
-        name = principal.getName(); //get logged in username
-        return "redirect:/admin/springmvc/greeting/"+name;
-    }
-    
-    @RequestMapping(value={"/logout"}, method=RequestMethod.GET )
-    public String logout(Model model) {
-        model.addAttribute("message", "Login...again :)");
-        return "login";
-    } 
+@RestController
+@RequestMapping("/my")
+@Component 
+public class MyResource {
+
+	@RequestMapping(value="/info", method = RequestMethod.GET, produces = "application/json")
+	public String createInfo(){
+		return "\n\n\t!!!Protected Resource(createInfo) Accessed !!!! Returning from Myresource createInfo\n";
+
+	}
+
+	@RequestMapping(value="/getMyInfo",method = RequestMethod.GET, produces = "application/json")
+	public String getMyInfo(){
+		
+		return "\n\n\t Protected Resource(getMyInfo) Accessed !!!! Returning from Myresource getMyInfo\n";
+	}
+
+	@RequestMapping(value="/updateInfo",method = RequestMethod.GET, produces = "application/json")
+	public String updateMyInfo(){
+		return "\n\n\t Protected Resource(updateInfo) Accessed !!!! Returning from Myresource updateInfo\n";
+		
+	}
+
 }

@@ -8,7 +8,7 @@
         <div id="master-loginform" class="master-loginform clearfix">
             <h1>Log in:</h1>
             <div>${message}</div>
-            <form id="login" action="<c:url value="/j_spring_security_check"></c:url>" method="post" role="form">
+            <form id="login" action="<c:url value="/j_spring_security_check"/>" method="post" role="form">
                 <div class="form-group">
                     <label for="j_username">Username</label>
                     <input type="text" name="j_username" class="form-control" value="">

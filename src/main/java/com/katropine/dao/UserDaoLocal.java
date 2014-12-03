@@ -32,5 +32,7 @@ public interface UserDaoLocal {
 
     int countAllUsers(String search);
 
+    User getByEmail(String email);
+            
     User authenticate(User user);
 }

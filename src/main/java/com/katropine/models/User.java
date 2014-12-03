@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlTransient; // will not be rendered in JSON
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name="User.getAll", query="SELECT e FROM User e"),
-    @NamedQuery(name="User.authenticate", query="SELECT e FROM User e WHERE e.email=:email"),
+    @NamedQuery(name="User.getByEmail", query="SELECT e FROM User e WHERE e.email=:email"),
     @NamedQuery(name="User.searchAll", query="SELECT e FROM User e WHERE e.firstname LIKE :fname OR e.lastname LIKE :lname OR e.email LIKE :email"),
     @NamedQuery(name="User.countAll", query="SELECT COUNT(e) FROM User e WHERE e.firstname LIKE :fname OR e.lastname LIKE :lname OR e.email LIKE :email")
 })

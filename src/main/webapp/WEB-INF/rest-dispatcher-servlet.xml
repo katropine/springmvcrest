@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security" 
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-4.0.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd
         
-    <context:component-scan base-package="com.katropine.resources, com.katropine.dao, com.katropine.json, com.katropine.libs, com.katropine.models, com.katropine.services" />
-    <mvc:annotation-driven enable-matrix-variables="true"/>
-    <mvc:resources location="/api/" mapping="/api/**" />
+">
+    
+    <context:component-scan base-package="com.katropine.resources, com.katropine.dao, com.katropine.libs, com.katropine.models, com.katropine.services, com.katropine.oauth" />
 
 
+	<mvc:annotation-driven />	<!-- Declares explicit support for annotation-driven MVC controllers  @RequestMapping, @Controller -->
+
+	<mvc:default-servlet-handler />
+	
+        
+        
+<!--	<bean id="MyResource" class="com.katropine.resources.MyResource"></bean>-->
+
+    <!--
+    
+    curl -i -H "Content-Type: application/json" -X POST http://localhost:8080/springmvcrest/api/oauth/token -d '{"username":"user1", "password":"user1", "client_id":"client1", "client_secret":"client1", "grant_type":"password"}'
+
+    
+    
+    -->
 </beans>

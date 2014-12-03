@@ -1,44 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans" 
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns:context="http://www.springframework.org/schema/context"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/jdbc
-           http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
-           http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
-
-
+<beans xmlns="http://www.springframework.org/schema/beans" 
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:sec="http://www.springframework.org/schema/security" 
+        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+        xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+        http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd
+        http://www.springframework.org/schema/security/oauth2
+        http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
     
-    <http auto-config="true" >  
+    
+<!--OAuth2   /api -->
+<!--
+curl -v -X GET -H "Content-Type: application/json" 'http://localhost:8080/springmvcrest/oauth/token?username=user1&password=user1&client_id=client1&client_secret=client1&grant_type=password'
+-->
 
-        <intercept-url pattern="/api/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/> 
+<!--    Step 1-->
+    <http pattern="/oauth/token" create-session="stateless"
+            authentication-manager-ref="authenticationManager"
+            xmlns="http://www.springframework.org/schema/security" > 
+            <intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />   <!-- requires-channel="https"-->
+            <anonymous enabled="false" />
+            <http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+            <custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" /> 
+            <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </http> 
+
+    <http auto-config="true" pattern="/api/**" create-session="never"
+            entry-point-ref="oauthAuthenticationEntryPoint"
+            xmlns="http://www.springframework.org/schema/security">
+            <anonymous enabled="false" />
+            <intercept-url pattern="/api/**" method="GET" />
+            <intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY"/>
+            <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+            <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </http>
+
+    <http pattern="/oauth/logout" create-session="never" 
+            entry-point-ref="oauthAuthenticationEntryPoint"
+            xmlns="http://www.springframework.org/schema/security">
+            <anonymous enabled="false" />
+            <intercept-url pattern="/oauth/logout" method="GET" />
+            <logout invalidate-session="true" logout-url="/oauth/logout" success-handler-ref="logoutSuccessHandler"   />
+            <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+            <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </http>
+
+    <bean id="logoutSuccessHandler" class="com.katropine.oauth.LogoutImpl" >
+            <property name="tokenstore" ref="tokenStore"></property>
+    </bean>
+
+    <bean id="oauthAuthenticationEntryPoint"
+            class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+    </bean>
+
+    <bean id="clientAuthenticationEntryPoint"
+            class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+            <property name="realmName" value="springsec/client" />
+            <property name="typeName" value="Basic" />
+    </bean>
+
+    <bean id="oauthAccessDeniedHandler"
+            class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+    </bean>
+
+    <bean id="clientCredentialsTokenEndpointFilter"
+            class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+            <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <authentication-manager id="authenticationManager" alias="authenticationManager"
+            xmlns="http://www.springframework.org/schema/security">
+            <authentication-provider user-service-ref="clientDetailsUserService" />
+    </authentication-manager>
+
+    <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+            <constructor-arg ref="clientDetails" />
+    </bean>
+
+    <bean id="clientDetails" class="com.katropine.oauth.ClientDetailsServiceImpl"/>
+
+    <authentication-manager id="userAuthenticationManager" alias="userAuthenticationManager"
+            xmlns="http://www.springframework.org/schema/security">
+            <authentication-provider  ref="customUserAuthenticationProvider">  
+            </authentication-provider>
+    </authentication-manager>
+
+    <bean id="customUserAuthenticationProvider" class="com.katropine.oauth.CustomUserAuthenticationProvider"></bean>
+    
+    <bean id="tokenServices" 
+            class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+            <property name="tokenStore" ref="tokenStore" />
+            <property name="supportRefreshToken" value="true" />
+            <property name="accessTokenValiditySeconds" value="300000"></property>
+            <property name="clientDetailsService" ref="clientDetails" />
+    </bean>
+    
+    <!-- Token management -->
+    <oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices">
+            <oauth:authorization-code />
+            <oauth:implicit/>
+            <oauth:refresh-token/>
+            <oauth:client-credentials />
+            <oauth:password authentication-manager-ref="userAuthenticationManager"/>
+    </oauth:authorization-server>
+
+    <oauth:resource-server id="resourceServerFilter" resource-id="springsec" token-services-ref="tokenServices" />
+
+    <bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" />
+
+
+   
+    <bean id="MyResource" class="com.katropine.resources.MyResource"></bean>
+    <bean id="SpringrestController" class="com.katropine.resources.SpringrestController"></bean>
+	
+<!--Form    /admin	   -->
+    <http auto-config="false" authentication-manager-ref="adminAuthManager" xmlns="http://www.springframework.org/schema/security">  
+
         <intercept-url pattern="/assets/css/*.css" access="IS_AUTHENTICATED_ANONYMOUSLY"/> 
         <intercept-url pattern="/assets/js/*.js" access="IS_AUTHENTICATED_ANONYMOUSLY"/>   
         <intercept-url pattern="/assets/images/*.png" access="IS_AUTHENTICATED_ANONYMOUSLY"/>  
         <intercept-url pattern="/assets/icons/*.png" access="IS_AUTHENTICATED_ANONYMOUSLY"/>   
-        <intercept-url pattern="/login" access="IS_AUTHENTICATED_ANONYMOUSLY"/>   
-        
+        <intercept-url pattern="/admin/login" access="IS_AUTHENTICATED_ANONYMOUSLY"/>   
+        <intercept-url pattern="/success-login" access="IS_AUTHENTICATED_ANONYMOUSLY"/> 
+        <intercept-url pattern="/error-login" access="IS_AUTHENTICATED_ANONYMOUSLY"/>   
+        <intercept-url pattern="/oauth/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+    
+        <intercept-url pattern="/admin" access="ROLE_ADMIN"/>
+        <intercept-url pattern="/admin/*" access="ROLE_ADMIN"/>
         <intercept-url pattern="/admin/**" access="ROLE_ADMIN"/>
+        
 
         <form-login login-page="/login" 
                     default-target-url="/success-login" 
-                    authentication-failure-url="/error-login"/>  
+                    authentication-failure-url="/error-login"/> 
+         <logout invalidate-session="true" 
+                    logout-success-url="/logout"
+                    logout-url="/j_spring_security_logout" /> 
 
-       
-       
     </http>  
     
 
-    <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder" />
-    <beans:bean id="customUserDetailsService" class="com.katropine.services.CustomUserDetailsService" />  
-    <authentication-manager>  
+    <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder" />
+    <bean id="customUserDetailsService" class="com.katropine.services.CustomUserDetailsService" />  
+    <authentication-manager alias="adminAuthManager" xmlns="http://www.springframework.org/schema/security">  
         <authentication-provider user-service-ref="customUserDetailsService">  
-            <password-encoder hash="bcrypt" />
-                
+            <password-encoder hash="bcrypt" />   
         </authentication-provider>  
-    </authentication-manager> 
+    </authentication-manager>
+     
  
-</beans:beans> 
+</beans> 

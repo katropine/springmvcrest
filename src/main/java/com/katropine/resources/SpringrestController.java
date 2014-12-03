@@ -24,21 +24,20 @@ import com.katropine.models.User;
 import com.katropine.services.UserServiceInterface;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.NoHandlerFoundException;
+
 
 // rest example
 
 @RestController
 @RequestMapping("/springrest")
-public class SpringrestController {
+@Component 
+public class SpringrestController{
     
     @Autowired
     protected UserServiceInterface userService;
@@ -48,10 +47,25 @@ public class SpringrestController {
          return new Greeting(id, "This is Greeting");
     }
     
-    
-    @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(value=HttpStatus.NOT_FOUND)
-    @ResponseBody
+    /**
+     * curl -v -X POST -H "Content-Type: application/json" 'http://localhost:8080/springmvcrest/oauth/token?username=kriss@test.com&password=test&client_id=client1&client_secret=client1&grant_type=password'
+
+        {
+                "access_token":"89fda693-ec29-451b-8be0-2b71c7f11999",
+                "token_type":"bearer",
+                "refresh_token":"2b86f070-ed56-41f4-8d13-faddc104b1bd",
+                "expires_in":299880,"scope":"client1"
+        }
+
+
+       curl -v -X GET -H "Authorization:Bearer f8987a33-e15a-407f-b725-886a935d2c15"  'http://localhost:8080/springmvcrest/api/springrest/users'
+        
+        
+       curl -v -X GET -H "Authorization:Bearer 89fda693-ec29-451b-8be0-2b71c7f11999"  "http://localhost:8044/springmvcrest/oauth/logout"
+       
+     * @return 
+     */
+    @ResponseBody 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     public List<User> findOwner() {
          return userService.getAll();
