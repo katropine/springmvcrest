@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd" 
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd
-         http://www.springframework.org/schema/context 
-         http://www.springframework.org/schema/context/spring-context-3.1.xsd
-">
-
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd          http://www.springframework.org/schema/context           http://www.springframework.org/schema/context/spring-context-3.1.xsd ">
     <!--    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>-->
+    <security-constraint>
+        <display-name>Constraint1</display-name>
+        <web-resource-collection>
+            <web-resource-name>SpringRestOauth</web-resource-name>
+            <description/>
+            <url-pattern>/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <user-data-constraint>
+            <description/>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
     <context-param>
         <param-name>log4jConfigLocation</param-name>
         <param-value>/WEB-INF/log4j.xml</param-value>
-    </context-param>            
-
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -26,69 +34,58 @@
             /WEB-INF/spring-security.xml
         </param-value>
     </context-param>
-    <filter>  
-        <filter-name>springSecurityFilterChain</filter-name>  
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>  
-    </filter>  
-    <filter-mapping>  
-        <filter-name>springSecurityFilterChain</filter-name>  
-        <url-pattern>/*</url-pattern>  
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping> 
-    
- 
+    </filter-mapping>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
-    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-  </listener> 
-<!--         Servlet for Web Services API  -->
-   <servlet>
-       <servlet-name>rest-dispatcher</servlet-name>
-       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <!--         Servlet for Web Services API  -->
+    <servlet>
+        <servlet-name>rest-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>throwExceptionIfNoHandlerFound</param-name>
             <param-value>true</param-value>
         </init-param>
         <init-param>
-                <param-name>debug</param-name>
-                <param-value>true</param-value>
-        </init-param> 
-       <load-on-startup>1</load-on-startup>
-       <async-supported>true</async-supported>
-   </servlet>
-   
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
     <servlet-mapping>
-            <servlet-name>rest-dispatcher</servlet-name>
-            <url-pattern>/api/*</url-pattern>
+        <servlet-name>rest-dispatcher</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
- 
-     
-     
-     
     <!--     Dispatcher servlet for MVC -->
     <servlet>
         <servlet-name>mvc-dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
-                <param-name>debug</param-name>
-                <param-value>true</param-value>
-        </init-param> 
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>mvc-dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    
-<!--    <welcome-file-list>
+    <!--    <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
     </welcome-file-list>-->
-    
-    
     <servlet-mapping>
         <servlet-name>mvc-dispatcher</servlet-name>
         <url-pattern>*.css</url-pattern>
@@ -113,9 +110,7 @@
         <session-timeout>
             30
         </session-timeout>
-    </session-config> 
-    
-
+    </session-config>
     <!--    <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
