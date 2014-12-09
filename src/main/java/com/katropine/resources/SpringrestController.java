@@ -48,20 +48,22 @@ public class SpringrestController{
     }
     
     /**
-     * curl -v -X POST -H "Content-Type: application/json" 'http://localhost:8080/springmvcrest/oauth/token?username=kriss@test.com&password=test&client_id=client1&client_secret=client1&grant_type=password'
+     * curl -v -X POST -H "Content-Type: application/json" 'https://localhost:8181/springmvcrest/oauth/token?username=kriss@test.com&password=test&client_id=client1&client_secret=client1&grant_type=password'
 
         {
                 "access_token":"89fda693-ec29-451b-8be0-2b71c7f11999",
                 "token_type":"bearer",
                 "refresh_token":"2b86f070-ed56-41f4-8d13-faddc104b1bd",
-                "expires_in":299880,"scope":"client1"
+                "expires_in":299880,
+                "scope":"client1"
         }
 
 
-       curl -v -X GET -H "Authorization:Bearer f8987a33-e15a-407f-b725-886a935d2c15"  'http://localhost:8080/springmvcrest/api/springrest/users'
+       curl -v -X GET -H "Authorization:Bearer 03094071-76d8-4e30-a13e-a34f1074e851"  'https://localhost:8181/springmvcrest/api/springrest/users'
         
+       curl -v -X POST -H "Content-Type: application/json" 'https://localhost:8181/springmvcrest/oauth/token?username=kriss@test.com&password=test&client_id=client1&client_secret=client1&grant_type=refresh_token&refresh_token=2b86f070-ed56-41f4-8d13-faddc104b1bd'
         
-       curl -v -X GET -H "Authorization:Bearer 89fda693-ec29-451b-8be0-2b71c7f11999"  "http://localhost:8044/springmvcrest/oauth/logout"
+       curl -v -X GET -H "Authorization:Bearer 89fda693-ec29-451b-8be0-2b71c7f11999"  "https://localhost:8181/springmvcrest/oauth/logout"
        
      * @return 
      */
